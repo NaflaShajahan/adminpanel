@@ -1,0 +1,219 @@
+ <!-- <nb-card status="success">
+  <nb-card-header>Site statistics</nb-card-header>
+  <nb-card-body>
+    <div class="row">
+      <div class="col-4">
+        <nb-card size="tiny" status="warning">
+          <nb-card-header>Riders</nb-card-header>
+          <nb-card-body>
+            <nb-icon icon="people" status="info" class="icon"></nb-icon>
+            <label class="text">{{riders}}</label>
+          </nb-card-body>
+        </nb-card>
+      </div>
+      <div class="col-4">
+        <nb-card size="tiny" status="warning">
+          <nb-card-header>Trips</nb-card-header>
+          <nb-card-body>
+            <nb-icon icon="car" status="info" class="icon"></nb-icon>
+            <label class="text">{{trips}}</label>
+          </nb-card-body>
+        </nb-card>
+      </div>
+      <div class="col-4">
+        <nb-card size="tiny" status="warning">
+          <nb-card-header>Drivers</nb-card-header>
+          <nb-card-body>
+            <nb-icon icon="person" status="info" class="icon"></nb-icon>
+            <label class="text">{{drivers}}</label>
+          </nb-card-body>
+        </nb-card>
+      </div>
+    </div>
+  </nb-card-body>
+</nb-card> -->
+
+<!-- <div class="row">
+  <div class="col-12">
+    <nb-card status="success">
+      <nb-card-header>
+        <div class="row">
+          <div class="col-10">Rides</div>
+          <div class="col-2">Drivers</div>
+        </div>
+      </nb-card-header>
+      <nb-card-body>
+        <div class="row">
+        <div class="col-6">
+        <ngx-charts-pie-chart
+  [view]="view"
+  [scheme]="colorScheme"
+  [results]="dual"
+  [gradient]="gradient"
+  [legend]="showLegend"
+  [legendPosition]="legendPosition"
+  [labels]="showLabels"
+  [doughnut]="isDoughnut"
+  >
+</ngx-charts-pie-chart>
+</div>
+<div class="col-6">
+  <ngx-charts-pie-chart
+[view]="view"
+[scheme]="colorScheme"
+[results]="single"
+[gradient]="gradient"
+[legend]="legend"
+[legendPosition]="legendPosition"
+[labels]="showLabels"
+[doughnut]="isDoughnut"
+>
+</ngx-charts-pie-chart>
+</div>
+</div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>  -->
+
+ <nb-card status="success">
+  <nb-card-header>Live view</nb-card-header>
+  <nb-card-body>
+
+<agm-map
+  [latitude]="lat"
+  [longitude]="lng"
+  [zoom]="zoom"
+  [disableDefaultUI]="false"
+ >
+ <agm-direction
+ [origin]="origin"
+ [destination]="destination"
+>
+</agm-direction>
+
+  <agm-marker
+      *ngFor="let m of markers; let i = index"
+      (markerClick)="clickedMarker(m.label, i)"
+      [latitude]="m.lat"
+      [longitude]="m.lng"
+      [label]="m.label"
+      [markerDraggable]="m.draggable"
+      [agmFitBounds]="true"
+      (dragEnd)="markerDragEnd(m, $event)"
+      [iconUrl]="{
+        url: './assets/car.svg',
+        scaledSize: {
+            width: 40,
+            height: 60
+        }}">
+
+    <agm-info-window>
+      <strong>InfoWindow content</strong>
+    </agm-info-window>
+
+  </agm-marker>
+  <agm-polyline [visible]="true" [strokeWeight]="3" [strokeColor]="'#07b57a'"  *ngFor="let coordinate of markers; let i=index">
+    <agm-icon-sequence [fixedRotation]="false"
+                                            [repeat]= "'50px'"
+                                            [offset]="100"
+                                            >
+                                        </agm-icon-sequence>
+    <agm-polyline-point
+    *ngFor="let coordinate of markers; let i=index"
+    [latitude]="coordinate.lat"
+    [longitude]="coordinate.lng">
+
+</agm-polyline-point>
+
+</agm-polyline>
+
+
+
+
+
+</agm-map>
+  </nb-card-body>
+</nb-card>
+
+<nb-card status="success">
+  <nb-card-header>
+    Trip History
+  </nb-card-header>
+  <nb-card-body>
+    <ngx-datatable class='material' #table [rows]='rows' [columnMode]="'force'" [headerHeight]="50"
+    [footerHeight]="30" [rowHeight]="'auto'"  [limit]="page.limit" [externalPaging]="true" [count]="page.count"
+    [offset]="page.offset" (page)="datatablePageData($event)"
+    [scrollbarH]="true">
+      <ngx-datatable-column name="Booking Number" [width]="90" [resizeable]="false" >
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{row.bookingNo}}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Booked By" [width]="90" [resizeable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{row.bookedBy}}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Address" [width]="100" [resizeable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{row.address}}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Date" [width]="100" [resizeable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{converDate(row.date)}}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Source" [width]="60" [resizeable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{row.sourceLocation}}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Destination" [width]="60" [resizeable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{row.destination}}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Driver" [width]="60" [resizeable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{row.driver}}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Trip Type" [width]="60" [resizeable]="false">
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          {{row.tripType}}
+        </ng-template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+
+  </nb-card-body>
+</nb-card>
+
+<div class="popover-container">
+  <div class="row">
+    <div class="col-10">
+    </div>
+    <div class="col-2">
+      <button [nbPopover]="list" nbPopoverPlacement="bottom" nbButton>Show Drivers</button>
+    </div>
+  </div>
+
+</div>
+
+<ng-template #list>
+  <nb-card class="margin-bottom-0">
+    <nb-list>
+      <nb-list-item>Driver 1 <label class="popup">Online</label></nb-list-item>
+      <nb-list-item>Driver 1 <label class="popup">Offline</label></nb-list-item>
+      <nb-list-item>Driver 1 <label class="popup">Online</label></nb-list-item>
+      <nb-list-item>Driver 1 <label class="popup">Offline</label></nb-list-item>
+      <nb-list-item>Driver 1 <label class="popup">Online</label></nb-list-item>
+      <nb-list-item>Driver 1 <label class="popup">Offline</label></nb-list-item>
+    </nb-list>
+  </nb-card>
+</ng-template>
+
+
+
+
